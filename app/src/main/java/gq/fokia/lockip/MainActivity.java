@@ -20,31 +20,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private TextView textView;
     private Button start;
     private Button stop;
-    private Button bind;
-    private Button unbind;
-//    private GetIpStatus.GetIpBinder getIpBinder;
-//    private ServiceConnection connection = new ServiceConnection(){
-//        @Override
-//        public void onServiceConnected(ComponentName name, IBinder service) {
-//            getIpBinder = (GetIpStatus.GetIpBinder) service;
-//            getIpBinder.startProgress();
-//        }
-//
-//        @Override
-//        public void onServiceDisconnected(ComponentName name) {
-//
-//        }
-//    };
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         textView = (TextView) findViewById(R.id.ip);
         textView.setOnClickListener(this);
-//        bind = (Button) findViewById(R.id.bind);
-//        bind.setOnClickListener(this);
-//        unbind = (Button) findViewById(R.id.unbind);
-//        unbind.setOnClickListener(this);
         start = (Button) findViewById(R.id.start);
         start.setOnClickListener(this);
         stop = (Button) findViewById(R.id.stop);
@@ -99,13 +80,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.stop:
                 Intent stopIntent = new Intent(this,GetIpStatus.class);
                 stopService(stopIntent);
-//            case R.id.bind:
-//                Intent intent = new Intent(this,GetIpStatus.class);
-//                bindService(intent, connection, BIND_AUTO_CREATE);
-//                break;
-//            case R.id.unbind:
-//                unbindService(connection);
-//                break;
             default:
                 break;
         }

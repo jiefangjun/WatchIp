@@ -5,8 +5,6 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
-import android.content.IntentFilter;
-import android.icu.text.LocaleDisplayNames;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
