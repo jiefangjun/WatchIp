@@ -82,6 +82,7 @@ public class GetIpStatus extends Service {
             public void run() {
                 if(!mBinder.getIp(true).equals(ipStatus)){
                     Log.d(TAG,"设置通知栏");
+                    ipStatus = mBinder.getIp(true);
                     setNotification(mBinder.getIp(true));
                 }
 
