@@ -3,6 +3,7 @@ package gq.fokia.lockip;
 import android.content.ComponentName;
 import android.content.Intent;
 import android.content.ServiceConnection;
+import android.content.SharedPreferences;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -16,10 +17,12 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener{
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView textView;
     private Button start;
     private Button stop;
+    private String ip;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -30,7 +33,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start.setOnClickListener(this);
         stop = (Button) findViewById(R.id.stop);
         stop.setOnClickListener(this);
+        restoreData();
     }
+
+    @Override
+    protected void onDestroy(){
+        super.onDestroy();
+        saveData();
+    }
+
     /**
      * 获取IP地址
      * <p>需添加权限 {@code <uses-permission android:name="android.permission.INTERNET"/>}</p>
@@ -65,23 +76,34 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         }
         return null;
     }
+
     @Override
     public void onClick(View v) {
-        switch (v.getId())
-        {
+        switch (v.getId()) {
             case R.id.ip:
-                textView.setText(getIPAddress(true));
+                ip = getIPAddress(true);
+                textView.setText(ip);
                 break;
             case R.id.start:
                 textView.setText(getIPAddress(true));
-                Intent startIntent = new Intent(this,GetIpStatus.class);
+                Intent startIntent = new Intent(this, GetIpStatus.class);
                 startService(startIntent);
                 break;
             case R.id.stop:
-                Intent stopIntent = new Intent(this,GetIpStatus.class);
+                Intent stopIntent = new Intent(this, GetIpStatus.class);
                 stopService(stopIntent);
             default:
                 break;
         }
+    }
+    public void saveData(){
+        SharedPreferences.Editor editor = getSharedPreferences("data",0).edit();
+        editor.putString("ipAddress",ip);
+        editor.commit();
+    }
+    public void restoreData(){
+        SharedPreferences sharedPreferences = getSharedPreferences("data",0);
+        ip = sharedPreferences.getString("ipAddress","Touch me");
+        textView.setText(ip);
     }
 }
