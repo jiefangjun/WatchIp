@@ -106,17 +106,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ip:
-                if(networkIsTrue()) {
-                    ip = getIPAddress(true);
-                    textView.setText(ip);
-                }else {
-                    Toast.makeText(this,"网络不可用",Toast.LENGTH_SHORT).show();
-                }
+                setText();
                 break;
             case R.id.start:
-                textView.setText(getIPAddress(true));
-                Intent startIntent = new Intent(this, GetIpStatus.class);
-                startService(startIntent);
+                if(setText()) {
+                    Intent startIntent = new Intent(this, GetIpStatus.class);
+                    startService(startIntent);
+                }
                 break;
             case R.id.stop:
                 Intent stopIntent = new Intent(this, GetIpStatus.class);
@@ -134,5 +130,16 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences sharedPreferences = getSharedPreferences("data",0);
         ip = sharedPreferences.getString("ipAddress","Touch me");
         textView.setText(ip);
+    }
+
+    public Boolean setText(){
+        if(networkIsTrue()) {
+            ip = getIPAddress(true);
+            textView.setText(ip);
+            return true;
+        }else {
+            Toast.makeText(this,"网络不可用",Toast.LENGTH_SHORT).show();
+            return false;
+        }
     }
 }

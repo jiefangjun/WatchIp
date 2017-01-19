@@ -29,7 +29,6 @@ public class GetIpStatus extends Service {
     private AlarmReceiver alarmReceiver;
     private AlarmManager alarmManager;
     private PendingIntent pi;
-    public static final String ACTION_PLAY = "play";
     public GetIpBinder mBinder = new GetIpBinder();
     static class GetIpBinder extends Binder{
         public void startProgress(){
