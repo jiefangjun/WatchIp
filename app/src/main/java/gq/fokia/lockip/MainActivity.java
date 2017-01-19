@@ -1,9 +1,12 @@
 package gq.fokia.lockip;
 
 import android.content.ComponentName;
+import android.content.Context;
 import android.content.Intent;
 import android.content.ServiceConnection;
 import android.content.SharedPreferences;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.IBinder;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,6 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -22,7 +26,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button start;
     private Button stop;
     private String ip;
-
+    private static String KEY = "ip";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -33,13 +37,24 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start.setOnClickListener(this);
         stop = (Button) findViewById(R.id.stop);
         stop.setOnClickListener(this);
-        restoreData();
+        //restoreData();
+        Log.d("MainActivity","on Executed");
+        if(savedInstanceState != null){
+            ip = savedInstanceState.getString(KEY,"Touch me");
+            textView.setText(ip);
+        }
     }
 
     @Override
     protected void onDestroy(){
         super.onDestroy();
         saveData();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        super.onSaveInstanceState(savedInstanceState);
+        savedInstanceState.putString(KEY, ip);
     }
 
     /**
@@ -77,12 +92,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         return null;
     }
 
+    public Boolean networkIsTrue(){
+        ConnectivityManager connectivityManager = (ConnectivityManager)
+                getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
+        if(networkInfo != null && networkInfo.isAvailable()){
+            return true;
+        }
+        else
+            return false;
+    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.ip:
-                ip = getIPAddress(true);
-                textView.setText(ip);
+                if(networkIsTrue()) {
+                    ip = getIPAddress(true);
+                    textView.setText(ip);
+                }else {
+                    Toast.makeText(this,"网络不可用",Toast.LENGTH_SHORT).show();
+                }
                 break;
             case R.id.start:
                 textView.setText(getIPAddress(true));
