@@ -11,6 +11,7 @@ import android.os.SystemClock;
 import android.provider.Settings;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -25,43 +26,11 @@ import java.util.Enumeration;
 public class GetIpStatus extends Service {
     private static final String TAG = "GetIpStatus";
     private Notification notification;
-    public String ipStatus;
-    private AlarmReceiver alarmReceiver;
+    public String ipStatus = "";
     private AlarmManager alarmManager;
     private PendingIntent pi;
-    public GetIpBinder mBinder = new GetIpBinder();
-    static class GetIpBinder extends Binder{
-        public void startProgress(){
-            Log.d("TAG","startProgress executed");
-        }
-        public String getIp(Boolean useIPv4){
-            try {
-                for (Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces(); nis.hasMoreElements(); ) {
-                    NetworkInterface ni = nis.nextElement();
-                    // 防止小米手机返回10.0.2.15
-                    if (!ni.isUp()) continue;
-                    for (Enumeration<InetAddress> addresses = ni.getInetAddresses(); addresses.hasMoreElements(); ) {
-                        InetAddress inetAddress = addresses.nextElement();
-                        if (!inetAddress.isLoopbackAddress()) {
-                            String hostAddress = inetAddress.getHostAddress();
-                            boolean isIPv4 = hostAddress.indexOf(':') < 0;
-                            if (useIPv4) {
-                                if (isIPv4) return hostAddress;
-                            } else {
-                                if (!isIPv4) {
-                                    int index = hostAddress.indexOf('%');
-                                    return index < 0 ? hostAddress.toUpperCase() : hostAddress.substring(0, index).toUpperCase();
-                                }
-                            }
-                        }
-                    }
-                }
-            } catch (SocketException e) {
-                e.printStackTrace();
-            }
-            return null;
-        }
-    }
+    private IpUtils ipUtils;
+    private String ipError = "网络不可用";
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -69,9 +38,12 @@ public class GetIpStatus extends Service {
     @Override
     public void onCreate(){
         super.onCreate();
-        ipStatus = mBinder.getIp(true);
-        Log.d(TAG,ipStatus);
-        setNotification(ipStatus);
+        ipUtils = new IpUtils(this, true);
+        if(ipUtils.getIpAddress().equals(ipStatus)) {
+            Log.d(TAG, ipStatus);
+            ipStatus = ipUtils.getIpAddress();
+            setNotification(ipStatus);
+        }
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
@@ -79,10 +51,19 @@ public class GetIpStatus extends Service {
         new Thread(new Runnable() {
             @Override
             public void run() {
-                if(!mBinder.getIp(true).equals(ipStatus)){
-                    Log.d(TAG,"设置通知栏");
-                    ipStatus = mBinder.getIp(true);
-                    setNotification(mBinder.getIp(true));
+                if(!ipUtils.getIpAddress().equals(ipStatus)){
+                    if(ipUtils.getIpAddress().equals("")){
+                        setNotification(ipError);
+                        ipStatus = ipUtils.getIpAddress();
+
+                    }
+                    else {
+                        Log.d(TAG, ipUtils.getIpAddress());
+                        Log.d(ipStatus, ipStatus);
+                        Log.d(TAG, "设置通知栏");
+                        ipStatus = ipUtils.getIpAddress();
+                        setNotification(ipStatus);
+                    }
                 }
 
             }

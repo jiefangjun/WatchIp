@@ -27,6 +27,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private Button stop;
     private String ip;
     private static String KEY = "ip";
+    private IpUtils ipUtils;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -37,12 +38,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start.setOnClickListener(this);
         stop = (Button) findViewById(R.id.stop);
         stop.setOnClickListener(this);
-        //restoreData();
         Log.d("MainActivity","on Executed");
         if(savedInstanceState != null){
             ip = savedInstanceState.getString(KEY,"Touch me");
             textView.setText(ip);
         }
+        ipUtils = new IpUtils(this,true);
     }
 
     @Override
@@ -57,51 +58,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         savedInstanceState.putString(KEY, ip);
     }
 
-    /**
-     * 获取IP地址
-     * <p>需添加权限 {@code <uses-permission android:name="android.permission.INTERNET"/>}</p>
-     *
-     * @param useIPv4 是否用IPv4
-     * @return IP地址
-     */
-    public static String getIPAddress(boolean useIPv4) {
-        try {
-            for (Enumeration<NetworkInterface> nis = NetworkInterface.getNetworkInterfaces(); nis.hasMoreElements(); ) {
-                NetworkInterface ni = nis.nextElement();
-                // 防止小米手机返回10.0.2.15
-                if (!ni.isUp()) continue;
-                for (Enumeration<InetAddress> addresses = ni.getInetAddresses(); addresses.hasMoreElements(); ) {
-                    InetAddress inetAddress = addresses.nextElement();
-                    if (!inetAddress.isLoopbackAddress()) {
-                        String hostAddress = inetAddress.getHostAddress();
-                        boolean isIPv4 = hostAddress.indexOf(':') < 0;
-                        if (useIPv4) {
-                            if (isIPv4) return hostAddress;
-                        } else {
-                            if (!isIPv4) {
-                                int index = hostAddress.indexOf('%');
-                                return index < 0 ? hostAddress.toUpperCase() : hostAddress.substring(0, index).toUpperCase();
-                            }
-                        }
-                    }
-                }
-            }
-        } catch (SocketException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 
-    public Boolean networkIsTrue(){
-        ConnectivityManager connectivityManager = (ConnectivityManager)
-                getSystemService(Context.CONNECTIVITY_SERVICE);
-        NetworkInfo networkInfo = connectivityManager.getActiveNetworkInfo();
-        if(networkInfo != null && networkInfo.isAvailable()){
-            return true;
-        }
-        else
-            return false;
-    }
     @Override
     public void onClick(View v) {
         switch (v.getId()) {
@@ -126,15 +83,10 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         editor.putString("ipAddress",ip);
         editor.commit();
     }
-    public void restoreData(){
-        SharedPreferences sharedPreferences = getSharedPreferences("data",0);
-        ip = sharedPreferences.getString("ipAddress","Touch me");
-        textView.setText(ip);
-    }
 
     public Boolean setText(){
-        if(networkIsTrue()) {
-            ip = getIPAddress(true);
+        if(!ipUtils.getIpAddress().equals("")) {
+            ip = ipUtils.getIpAddress();
             textView.setText(ip);
             return true;
         }else {
