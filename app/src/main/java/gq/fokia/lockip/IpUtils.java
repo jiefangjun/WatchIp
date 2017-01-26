@@ -3,8 +3,6 @@ package gq.fokia.lockip;
 import android.content.Context;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
-import android.os.Looper;
-import android.widget.Toast;
 
 import java.net.InetAddress;
 import java.net.NetworkInterface;

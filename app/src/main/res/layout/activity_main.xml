@@ -14,6 +14,14 @@
         android:layout_height="wrap_content"
         android:text="Touch me" />
 
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:inputType="number"
+        android:ems="10"
+        android:hint="输入ip扫描时间间隔，默认最小值5s"
+        android:id="@+id/editText" />
+
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"

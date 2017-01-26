@@ -25,6 +25,7 @@ import java.util.Enumeration;
 
 public class GetIpStatus extends Service {
     private static final String TAG = "GetIpStatus";
+    public static int intervalTime = 1;
     private Notification notification;
     public String ipStatus = "";
     private AlarmManager alarmManager;
@@ -69,9 +70,9 @@ public class GetIpStatus extends Service {
             }
 
         }).start();
+        Log.d("intervalTime",intervalTime+"");
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
-        int oneSecond = 1000;
-        long triggerAtTime = SystemClock.elapsedRealtime() + oneSecond;
+        long triggerAtTime = SystemClock.elapsedRealtime() + intervalTime * 1000;
         Intent i = new Intent(this, AlarmReceiver.class);
         pi = PendingIntent.getBroadcast(this,0,i,0);
         alarmManager.set(AlarmManager.ELAPSED_REALTIME_WAKEUP,triggerAtTime,pi);

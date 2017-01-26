@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,6 +22,8 @@ import java.net.NetworkInterface;
 import java.net.SocketException;
 import java.util.Enumeration;
 
+import static gq.fokia.lockip.GetIpStatus.intervalTime;
+
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView textView;
     private Button start;
@@ -28,6 +31,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private String ip;
     private static String KEY = "ip";
     private IpUtils ipUtils;
+    private EditText interval;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,10 +42,13 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         start.setOnClickListener(this);
         stop = (Button) findViewById(R.id.stop);
         stop.setOnClickListener(this);
+        interval = (EditText) findViewById(R.id.editText);
         Log.d("MainActivity","on Executed");
         if(savedInstanceState != null){
             ip = savedInstanceState.getString(KEY,"Touch me");
             textView.setText(ip);
+            intervalTime = savedInstanceState.getInt("intervalTime",1);
+            interval.setText(intervalTime);
         }
         ipUtils = new IpUtils(this,true);
     }
@@ -67,6 +74,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.start:
                 if(setText()) {
+                    //intervalTime = interval.getTextDirection();
+                    String interval_text = interval.getText().toString().trim();
+                    if(!interval_text.isEmpty()) {
+                        intervalTime = Integer.parseInt(interval.getText().toString());
+                        Log.d("MainActivity", intervalTime + "");
+                    }
                     Intent startIntent = new Intent(this, GetIpStatus.class);
                     startService(startIntent);
                 }
@@ -74,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.stop:
                 Intent stopIntent = new Intent(this, GetIpStatus.class);
                 stopService(stopIntent);
+                break;
             default:
                 break;
         }
@@ -81,6 +95,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void saveData(){
         SharedPreferences.Editor editor = getSharedPreferences("data",0).edit();
         editor.putString("ipAddress",ip);
+        editor.putInt("intervalTime",intervalTime);
         editor.commit();
     }
 
