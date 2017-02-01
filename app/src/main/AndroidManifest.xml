@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="gq.fokia.lockip">
+    package="gq.fokia.watchip">
 
     <application
         android:allowBackup="true"
@@ -8,14 +8,14 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".MainActivity">
+        <activity android:name="gq.fokia.watchip.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <service android:name=".GetIpStatus"/>
-        <receiver android:name=".AlarmReceiver"/>
+        <service android:name="gq.fokia.watchip.GetIpStatus"/>
+        <receiver android:name="gq.fokia.watchip.AlarmReceiver"/>
     </application>
 
     <uses-permission android:name="android.permission.INTERNET"/>

@@ -1,4 +1,4 @@
-package gq.fokia.lockip;
+package gq.fokia.watchip;
 
 import org.junit.Test;
 

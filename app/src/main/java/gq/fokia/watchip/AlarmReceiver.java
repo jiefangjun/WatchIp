@@ -1,4 +1,4 @@
-package gq.fokia.lockip;
+package gq.fokia.watchip;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
