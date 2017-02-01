@@ -7,6 +7,7 @@
     android:orientation="vertical"
     tools:context="gq.fokia.lockip.MainActivity">
 
+
     <TextView
         android:id="@+id/ip"
         android:textSize="35sp"
@@ -21,6 +22,40 @@
         android:ems="10"
         android:hint="输入ip扫描时间间隔，默认最小值5s"
         android:id="@+id/editText" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+
+        <TextView
+            android:text="通知"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/textView" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <CheckBox
+                android:text="声音"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/voice" />
+
+            <CheckBox
+                android:text="震动"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/vibration" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:orientation="vertical"

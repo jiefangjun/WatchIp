@@ -1,5 +1,6 @@
 package gq.fokia.lockip;
 
+import android.app.Notification;
 import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
@@ -8,19 +9,17 @@ import android.content.SharedPreferences;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.IBinder;
+import android.preference.PreferenceManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.net.InetAddress;
-import java.net.NetworkInterface;
-import java.net.SocketException;
-import java.util.Enumeration;
 
 import static gq.fokia.lockip.GetIpStatus.intervalTime;
 
@@ -32,23 +31,50 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static String KEY = "ip";
     private IpUtils ipUtils;
     private EditText interval;
+    public CheckBox voice;
+    public CheckBox vibration;
+    public Boolean bvoice = false;
+    public Boolean bvibration = false;
+    private SharedPreferences pref;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        pref = getSharedPreferences("data", 0);
         textView = (TextView) findViewById(R.id.ip);
         textView.setOnClickListener(this);
+        voice = (CheckBox) findViewById(R.id.voice);
+        vibration = (CheckBox) findViewById(R.id.vibration);
+
         start = (Button) findViewById(R.id.start);
         start.setOnClickListener(this);
         stop = (Button) findViewById(R.id.stop);
         stop.setOnClickListener(this);
+
         interval = (EditText) findViewById(R.id.editText);
         Log.d("MainActivity","on Executed");
+
+        bvoice = pref.getBoolean("voice", false);
+        bvibration = pref.getBoolean("vibration", false);
+        intervalTime = pref.getInt("intervalTime", 5);
+        voice.setChecked(bvoice);
+        vibration.setChecked(bvibration);
+
+        interval.setText(intervalTime+"");
+        //设置光标位置
+        interval.setSelection((intervalTime+"").length());
+
         if(savedInstanceState != null){
             ip = savedInstanceState.getString(KEY,"Touch me");
             textView.setText(ip);
             intervalTime = savedInstanceState.getInt("intervalTime",1);
-            interval.setText(intervalTime);
+            interval.setText(intervalTime+"");
+
+            bvoice = savedInstanceState.getBoolean("voice", false);
+            bvibration = savedInstanceState.getBoolean("vibration", false);
+
+            voice.setChecked(bvoice);
+            vibration.setChecked(bvibration);
         }
         ipUtils = new IpUtils(this,true);
     }
@@ -56,6 +82,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onDestroy(){
         super.onDestroy();
+        Log.d("MainActivity","onDestroy Executed");
         saveData();
     }
 
@@ -63,6 +90,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onSaveInstanceState(Bundle savedInstanceState){
         super.onSaveInstanceState(savedInstanceState);
         savedInstanceState.putString(KEY, ip);
+        savedInstanceState.putBoolean("voice", bvoice);
+        savedInstanceState.putBoolean("vibration", bvibration);
     }
 
 
@@ -74,12 +103,26 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.start:
                 if(setText()) {
-                    //intervalTime = interval.getTextDirection();
+
                     String interval_text = interval.getText().toString().trim();
                     if(!interval_text.isEmpty()) {
                         intervalTime = Integer.parseInt(interval.getText().toString());
                         Log.d("MainActivity", intervalTime + "");
                     }
+                    SharedPreferences.Editor editor = getSharedPreferences("data",0).edit();
+                    Log.d("voice.isChecked()",voice.isChecked()+"");
+                    if(voice.isChecked()){
+                        editor.putBoolean("voice", true);
+                    }else {
+                        editor.putBoolean("voice", false);
+                    }
+                    if(vibration.isChecked())
+                    {
+                        editor.putBoolean("vibration", true);
+                    }else {
+                        editor.putBoolean("vibration", false);
+                    }
+                    editor.commit();
                     Intent startIntent = new Intent(this, GetIpStatus.class);
                     startService(startIntent);
                 }
@@ -92,10 +135,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
         }
     }
+
     public void saveData(){
         SharedPreferences.Editor editor = getSharedPreferences("data",0).edit();
         editor.putString("ipAddress",ip);
+
         editor.putInt("intervalTime",intervalTime);
+        if(voice.isChecked()){
+            bvoice = true;
+        }
+        if(vibration.isChecked()){
+            bvibration = true;
+        }
+        editor.putBoolean("voice", bvoice);
+        editor.putBoolean("vibration", bvibration);
         editor.commit();
     }
 

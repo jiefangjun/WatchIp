@@ -5,6 +5,7 @@ import android.app.Notification;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Binder;
 import android.os.IBinder;
 import android.os.SystemClock;
@@ -26,12 +27,15 @@ import java.util.Enumeration;
 public class GetIpStatus extends Service {
     private static final String TAG = "GetIpStatus";
     public static int intervalTime = 1;
+    public static Boolean is_voice = false;
+    public static Boolean is_vibration = false;
     private Notification notification;
     public String ipStatus = "";
     private AlarmManager alarmManager;
     private PendingIntent pi;
     private IpUtils ipUtils;
     private String ipError = "网络不可用";
+
     @Override
     public IBinder onBind(Intent intent) {
         return null;
@@ -91,11 +95,22 @@ public class GetIpStatus extends Service {
         Intent notificationIntent = new Intent(this,MainActivity.class);
         builder.setContentIntent(PendingIntent.getActivity(this,0,notificationIntent,0))
                 .setSmallIcon(R.mipmap.ic_launcher)
-                .setContentTitle(ip)
+                .setContentTitle("WatchIp")
+                .setContentText(ip)
                 .setPriority(2)
                 .setWhen(System.currentTimeMillis());
         notification = builder.build();
-        notification.defaults = Notification.DEFAULT_SOUND;
+        SharedPreferences config = getSharedPreferences("data",0);
+        is_voice = config.getBoolean("voice", false);
+        is_vibration = config.getBoolean("vibration", false);
+        if(is_voice){
+            if(is_vibration){
+                notification.defaults = Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE;
+            }else
+            notification.defaults = Notification.DEFAULT_SOUND;
+        } else if(is_vibration){
+            notification.defaults = Notification.DEFAULT_VIBRATE;
+        }
         startForeground(110, notification);
     }
 }
