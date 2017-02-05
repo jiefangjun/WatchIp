@@ -18,6 +18,8 @@ import static gq.fokia.watchip.GetIpStatus.intervalTime;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private TextView textView;
+    private long lastTime;
+    private long currentTime;
     private Button start;
     private Button stop;
     private String ip;
@@ -32,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //appManager.addActivity(this);
         setContentView(R.layout.activity_main);
         pref = getSharedPreferences("data", 0);
         textView = (TextView) findViewById(R.id.ip);
@@ -73,10 +76,21 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     @Override
-    protected void onDestroy(){
+    public void onDestroy(){
         super.onDestroy();
         Log.d("MainActivity","onDestroy Executed");
         saveData();
+    }
+
+    @Override
+    public void onBackPressed(){
+        currentTime = System.currentTimeMillis();
+        if(currentTime - lastTime < 2 * 1000){
+            super.onBackPressed();
+        }else {
+            Toast.makeText(this,"再按一次退出程序",Toast.LENGTH_SHORT).show();
+            lastTime = currentTime;
+        }
     }
 
     @Override

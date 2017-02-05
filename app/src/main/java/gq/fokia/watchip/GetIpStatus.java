@@ -82,6 +82,7 @@ public class GetIpStatus extends Service {
         super.onDestroy();
     }
 
+
     public void setNotification(String ip){
         NotificationCompat.Builder builder = new NotificationCompat.Builder(this);
         Intent notificationIntent = new Intent(this,MainActivity.class);
