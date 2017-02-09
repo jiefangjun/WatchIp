@@ -6,7 +6,6 @@ import android.content.Intent;
 import android.util.Log;
 
 
-
 /**
  * Created by fokia on 17-1-16.
  */
