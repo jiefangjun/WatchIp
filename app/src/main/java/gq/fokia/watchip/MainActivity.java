@@ -19,14 +19,21 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 
+import java.net.InetAddress;
+import java.net.NetworkInterface;
+import java.net.SocketException;
+import java.util.Enumeration;
+
 import static gq.fokia.watchip.GetIpStatus.intervalTime;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+
     private TextView textView;
     private long lastTime;
     private long currentTime;
     private Button start;
     private Button stop;
+    private Button test;
     private String ip;
     private static String KEY = "ip";
     private IpUtils ipUtils;
@@ -41,8 +48,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-//5.0 全透明实现
-//getWindow.setStatusBarColor(Color.TRANSPARENT)
+        //5.0 全透明实现
+        //getWindow.setStatusBarColor(Color.TRANSPARENT)
             Window window = getWindow();
             window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS);
             window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN | View.SYSTEM_UI_FLAG_LAYOUT_STABLE);
@@ -92,7 +99,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             voice.setChecked(bvoice);
             vibration.setChecked(bvibration);
         }
-        ipUtils = new IpUtils(this,true);
+
+        test = (Button) findViewById(R.id.test);
+        test.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(getApplicationContext(), IpUtils.getIpAddress(), Toast.LENGTH_LONG).show();
+            }
+        });
     }
 
     @Override
@@ -180,8 +194,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     public Boolean setText(){
-        if(!ipUtils.getIpAddress().equals("")) {
-            ip = ipUtils.getIpAddress();
+        if(!IpUtils.getIpAddress().equals("")) {
+            ip = IpUtils.getIpAddress();
             textView.setText(ip);
             return true;
         }else {

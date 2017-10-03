@@ -90,6 +90,13 @@
             android:layout_below="@+id/start"
             android:layout_alignParentEnd="true" />
 
+        <Button
+            android:text="Test"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/test"
+            android:layout_below="@+id/stop"
+            android:layout_alignParentEnd="true"/>
 
     </LinearLayout>
 

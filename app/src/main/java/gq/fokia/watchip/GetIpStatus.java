@@ -35,7 +35,6 @@ public class GetIpStatus extends Service {
     @Override
     public void onCreate(){
         super.onCreate();
-        ipUtils = new IpUtils(this, true);
         if(ipUtils.getIpAddress().equals(ipStatus)) {
             Log.d(TAG, ipStatus);
             ipStatus = ipUtils.getIpAddress();
