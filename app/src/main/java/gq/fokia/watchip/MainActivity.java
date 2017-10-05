@@ -33,7 +33,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private long currentTime;
     private Button start;
     private Button stop;
-    private Button test;
     private String ip;
     private static String KEY = "ip";
     private IpUtils ipUtils;
@@ -75,7 +74,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         stop.setOnClickListener(this);
 
         interval = (EditText) findViewById(R.id.editText);
-        Log.d("MainActivity","on Executed");
 
         bvoice = pref.getBoolean("voice", false);
         bvibration = pref.getBoolean("vibration", false);
@@ -99,20 +97,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             voice.setChecked(bvoice);
             vibration.setChecked(bvibration);
         }
-
-        test = (Button) findViewById(R.id.test);
-        test.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Toast.makeText(getApplicationContext(), IpUtils.getIpAddress(), Toast.LENGTH_LONG).show();
-            }
-        });
     }
 
     @Override
     public void onDestroy(){
         super.onDestroy();
-        Log.d("MainActivity","onDestroy Executed");
         saveData();
     }
 
@@ -181,7 +170,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         SharedPreferences.Editor editor = getSharedPreferences("data",0).edit();
         editor.putString("ipAddress",ip);
 
-        editor.putInt("intervalTime",intervalTime);
+        editor.putInt("intervalTime", intervalTime);
         if(voice.isChecked()){
             bvoice = true;
         }

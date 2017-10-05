@@ -36,14 +36,12 @@ public class GetIpStatus extends Service {
     public void onCreate(){
         super.onCreate();
         if(ipUtils.getIpAddress().equals(ipStatus)) {
-            Log.d(TAG, ipStatus);
             ipStatus = ipUtils.getIpAddress();
             setNotification(ipStatus);
         }
     }
     @Override
     public int onStartCommand(Intent intent, int flags, int startId){
-        Log.d(TAG,"onStartCommand executed");
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -54,9 +52,6 @@ public class GetIpStatus extends Service {
 
                     }
                     else {
-                        Log.d(TAG, ipUtils.getIpAddress());
-                        Log.d(ipStatus, ipStatus);
-                        Log.d(TAG, "设置通知栏");
                         ipStatus = ipUtils.getIpAddress();
                         setNotification(ipStatus);
                     }
@@ -65,7 +60,6 @@ public class GetIpStatus extends Service {
             }
 
         }).start();
-        Log.d("intervalTime",intervalTime+"");
         alarmManager = (AlarmManager) getSystemService(ALARM_SERVICE);
         long triggerAtTime = SystemClock.elapsedRealtime() + intervalTime * 1000;
         Intent i = new Intent(this, AlarmReceiver.class);
@@ -75,7 +69,6 @@ public class GetIpStatus extends Service {
     }
     @Override
     public void onDestroy(){
-        Log.d(TAG,"onDestroy executed");
         stopForeground(true);
         alarmManager.cancel(pi);
         super.onDestroy();
